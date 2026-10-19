@@ -25,19 +25,58 @@ const LINES = {
     f12: ['vuxen', 'Bra lyssnat, Teddy! Först gör man, sen får man.'],
   },
   stopp: {
-    s1: 'Teddy och {vuxen} är i parken. Tryck på bollen så sparkar Teddy!',
-    s1b: 'Tryck på bollen igen!',
-    s2: 'Oj! Bollen rullade bort mot vägen. Teddy vill springa efter.',
+    p1: 'Teddy och {vuxen} är i parken. Teddy vill sparka bollen. Vart ska han sparka?',
+    p1b: 'Vart ska Teddy sparka bollen nu?',
+    p_gras: 'På gräset', p_vag: 'Mot vägen',
+    p2: 'Oj! Bollen rullade ut på vägen. Teddy vill springa efter.',
     s3: ['vuxen', 'STOPP, Teddy! Stå still!'],
     s4: 'Vad ska Teddy göra?',
     s_still: 'Stå still', s_spring: 'Springa',
     s9: 'Teddy står still. Titta, där kommer en bil!',
     s5: '{vuxen} hann ta Teddy i handen. Titta, där kommer en bil!',
-    s6: 'Bilen körde förbi. {vuxen} såg bilen, men det gjorde inte Teddy.',
+    p3: 'Pyyys! Bilen körde över bollen. Nu är bollen platt.',
+    p4: ['teddy', 'Åh nej, min boll!'],
     s7: ['vuxen', 'När jag säger stopp, då stannar vi. Då är vi säkra.'],
-    s8: 'Vi försöker igen!',
-    s10: ['vuxen', 'Bra lyssnat, Teddy! Nu är vägen tom. Jag hämtar bollen.'],
-    s11: 'Vuxna ser saker som barn inte ser. Därför lyssnar vi när någon säger stopp.',
+    p5: ['vuxen', 'Bra lyssnat, Teddy! Du stod kvar på trottoaren.'],
+    p6: ['vuxen', 'Nu är vägen tom. Jag hämtar bollen.'],
+    p7: ['vuxen', 'Bilar ser inte bollar. Därför sparkar vi bollen långt från vägen.'],
+    p8: ['vuxen', 'Vi lagar bollen! Tryck på plåstret.'],
+    p9: ['vuxen', 'Nu pumpar vi luft i bollen. Tryck på pumpen, många gånger!'],
+    p10: 'Bollen är hel igen!',
+    p11: ['vuxen', 'Titta först! Kommer det någon, eller är det fritt fram?'],
+    p12m: 'Där kommer Mus!', p12a: 'Där kommer Anka!',
+    p13: 'Det kommer ingen.',
+    p_vanta: 'Vänta', p_sparka: 'Sparka',
+    p15: 'Teddy väntar tills kompisen har gått förbi.',
+    p16: 'Nu är det fritt fram!',
+    p21: 'Teddy väntar. Men det kommer ingen. Det är fritt fram!',
+    p17m: 'Aj! Bollen studsade på Mus.', p17a: 'Aj! Bollen studsade på Anka.',
+    p18: ['teddy', 'Förlåt! Jag såg dig inte.'],
+    p19m: ['mus', 'Det är okej, Teddy.'], p19a: ['anka', 'Det är okej, Teddy.'],
+    p20: ['vuxen', 'Vi tittar först, så att ingen är i vägen.'],
+    p22: 'Tryck på bollen så sparkar Teddy!',
+    p23: ['vuxen', 'Bra! På gräset kan vi sparka. Där är det säkert.'],
+    p24: 'Vi sparkar långt från vägen och tittar först så att ingen är i vägen. Och när en vuxen säger stopp, då stannar vi.',
+  },
+  gata: {
+    x1: 'Teddy och {vuxen} är ute och går. Tryck på fotspåren!',
+    x2: ['vuxen', 'Stopp! Här är kanten. Här stannar vi.'],
+    x3: ['vuxen', 'Ta min hand, Teddy. Tryck på handen!'],
+    x4: 'Teddy håller {vuxen} i handen.',
+    x5: ['vuxen', 'Nu tittar vi efter bilar. Vänster, höger, vänster.'],
+    x6: 'Tryck på pilen. Titta åt vänster!',
+    x7: 'Titta åt höger!',
+    x8: 'Och vänster igen!',
+    x_v: 'Vänster', x_h: 'Höger',
+    x_igen: 'Vi tittar en gång till.',
+    x_tom: 'Ingen bil. Det är tomt!',
+    x_bil: 'Där kommer en bil! Håll fingret på bilen tills den har kört förbi.',
+    x_vantar: ['teddy', 'Vi väntar, vi väntar …'],
+    x_forbi: 'Bilen har kört förbi.',
+    x9: ['vuxen', 'Nu är det tomt åt alla håll. Nu går vi över tillsammans!'],
+    x10: 'Tryck på fotspåren!',
+    x11: 'Hurra! Teddy och {vuxen} gick över gatan tillsammans.',
+    x12: 'Vid kanten stannar vi. Vi håller en vuxen i handen och tittar vänster, höger, vänster.',
   },
   arg: {
     a1: 'Teddy leker med sin röda bil. Brum, brum!',
@@ -162,6 +201,8 @@ function sfx(k) {
   else if (k === 'splash') noise(t, .3, 'highpass', 1800, .22);
   else if (k === 'brum') engine(t, 2.5);
   else if (k === 'brumKort') engine(t, 1);
+  else if (k === 'pys') noise(t, 1.1, 'highpass', 2500, .12);
+  else if (k === 'pump') { noise(t, .22, 'bandpass', 1400, .3); tone(300, t, .15, .05, 'triangle'); }
   else if (k === 'crash') [0, .1, .22, .3].forEach(d => drum(110 + Math.random() * 80, t + d, .35));
 }
 
@@ -337,18 +378,82 @@ async function storyForsthem() {
 // ---------- Berättelse 2: Stopp vid vägen ----------
 async function storyStopp() {
   stage(BG.stopp());
+  put('boll', '', 245, 284);
   put('bil', PROP.bil('#1e88e5'), -80, 186, .9);
-  put('boll', PROP.boll() + HIT(22, -13), 245, 284);
   actor('vuxen', 'vuxen', 70, 286, 1.2);
   actor('teddy', 'teddy', 190, 280, .85);
-  for (let tries = 0; ; tries++) {
-    setT('teddy', { x: 190, y: 280 }, 0); setT('boll', { x: 245, y: 284, r: 0 }, 0); setT('vuxen', { x: 70, y: 286 }, 0);
+  let plast = false, round = 0, friends = 0;
+  const ball = p => redraw('boll', PROP.boll(p, plast) + HIT(22, -13));
+  ball(1);
+  const repair = async () => {
+    mood('teddy', 'ledsen2');
+    move('teddy', { x: 150, y: 282 }, 600); await move('vuxen', { x: 60, y: 288 }, 600);
+    put('plaster', PROP.plaster(1.3) + HIT(30, 0), 330, 262);
+    await say('p8'); await tap('plaster');
+    await move('plaster', { x: 250, y: 272, s: .6 }, 600); remove('plaster');
+    plast = true; ball(0); sfx('ok');
+    put('pump', PROP.pump() + HIT(44, -50), 210, 290);
+    await say('p9');
+    for (let i = 1; i <= 5; i++) {
+      await tap('pump'); anim('pump', 'squish', 400); sfx('pump'); ball(i / 5); anim('boll', 'hop', 300);
+      const id = 'n' + i; $('#sub').textContent = T(id); voice(T(id), REC.get(id)).catch(() => {});
+    }
+    await wait(700); remove('pump');
+    sfx('chime'); mood('teddy', 'glad', 'upp'); hearts(250, 230);
+    await say('p10'); mood('teddy', 'glad');
+  };
+  const grass = async () => {
+    for (;;) {
+      await say('p11');
+      const fk = friends % 2 ? 'anka' : 'mus', comes = Math.random() < (friends ? .5 : .7);
+      if (comes) {
+        friends++; actor('kompis', fk, 440, 268, .55);
+        anim('kompis', 'walk'); await move('kompis', { x: 312 }, 1600); stopAnim('kompis', 'walk');
+        await say(fk === 'mus' ? 'p12m' : 'p12a');
+      } else await say('p13');
+      await say('s4');
+      const k = await choose([{ k: 'vanta', icon: ICON.timglas, l: 'p_vanta' }, { k: 'sparka', icon: ICON.boll, l: 'p_sparka' }]);
+      if (k === 'vanta') {
+        if (comes) {
+          await say('p15');
+          anim('kompis', 'walk'); await move('kompis', { x: 440, y: 244, s: .45 }, 1800); remove('kompis');
+          await say('p16');
+        } else await say('p21');
+        break;
+      }
+      if (!comes) break;
+      anim('teddy', 'hop', 450);
+      await move('boll', { x: 296, y: 262, r: 360 }, 600);
+      sfx('thump'); anim('kompis', 'squish', 400); mood('kompis', 'ledsen');
+      await move('boll', { x: 258, y: 282, r: 0 }, 500);
+      mood('teddy', 'forvanad');
+      await say(fk === 'mus' ? 'p17m' : 'p17a');
+      mood('teddy', 'ledsen2'); await say('p18');
+      mood('kompis', 'glad'); mood('teddy', 'glad'); hearts(312, 200);
+      await say(fk === 'mus' ? 'p19m' : 'p19a');
+      await say('p20');
+      anim('kompis', 'walk'); await move('kompis', { x: 440, y: 244, s: .45 }, 1600); remove('kompis');
+      await move('boll', { x: 245, y: 284 }, 400);
+    }
+    await say('p22'); await tap('boll');
+    anim('teddy', 'hop', 450);
+    await move('boll', { x: 340, y: 274, r: 720 }, 1100); setT('boll', { r: 0 }, 0); anim('boll', 'hop', 450);
+    sfx('brum');
+    await Promise.all([move('bil', { x: 500 }, 2600), say('p23')]);
+    setT('bil', { x: -80 }, 0);
+    mood('teddy', 'glad', 'upp'); hearts(190, 190); sfx('ok');
+    await say('p24');
+  };
+  for (;;) {
+    setT('teddy', { x: 190, y: 280 }, 0); setT('vuxen', { x: 70, y: 286 }, 0); setT('boll', { x: 245, y: 284, r: 0 }, 0);
     mood('teddy', 'glad'); mood('vuxen', 'glad');
-    await say(tries ? 's1b' : 's1');
-    await tap('boll');
-    anim('teddy', 'hop', 450); await move('boll', { x: 310, y: 204, r: 540 }, 1300);
+    await say(round++ ? 'p1b' : 'p1');
+    const dir = await choose([{ k: 'gras', icon: ICON.gras, l: 'p_gras' }, { k: 'vag', icon: ICON.vag, l: 'p_vag' }]);
+    if (dir === 'gras') { await grass(); return; }
+    anim('teddy', 'hop', 450);
+    await move('boll', { x: 310, y: 182, r: 720 }, 1300); setT('boll', { r: 0 }, 0);
     mood('teddy', 'forvanad');
-    await say('s2');
+    await say('p2');
     mood('vuxen', 'forvanad', 'upp');
     await say('s3');
     mood('vuxen', 'glad');
@@ -357,17 +462,122 @@ async function storyStopp() {
     if (k === 'spring') {
       anim('vuxen', 'walk'); move('teddy', { x: 262, y: 246 }, 800); await move('vuxen', { x: 226, y: 254 }, 800); stopAnim('vuxen', 'walk');
       mood('teddy', 'forvanad'); await say('s5');
-    } else { await say('s9'); }
-    sfx('brum'); await move('bil', { x: 500 }, 2600); setT('bil', { x: -80 }, 0);
-    await say('s6');
-    if (k === 'spring') { await say('s7'); await say('s8'); continue; }
-    await say('s10');
-    anim('vuxen', 'walk'); await move('vuxen', { x: 290, y: 214, s: 1 }, 1200);
-    move('boll', { x: 245, y: 284, r: 0 }, 1200); await move('vuxen', { x: 110, y: 286, s: 1.2 }, 1200); stopAnim('vuxen', 'walk');
-    mood('teddy', 'glad', 'upp'); hearts(190, 190); sfx('ok');
-    await say('s11');
-    return;
+    } else await say('s9');
+    sfx('brum');
+    setT('bil', { x: 500 }, 2600);
+    await wait(1750);
+    ball(0); sfx('pys'); anim('boll', 'squish', 400);
+    await wait(850); setT('bil', { x: -80 }, 0);
+    mood('teddy', 'ledsen');
+    await say('p3');
+    await say('p4');
+    await say(k === 'spring' ? 's7' : 'p5');
+    await say('p6');
+    anim('vuxen', 'walk');
+    await move('vuxen', { x: 296, y: 214, s: 1 }, 1100);
+    move('boll', { x: 245, y: 284 }, 1100); move('teddy', { x: 190, y: 280 }, 1100);
+    await move('vuxen', { x: 100, y: 286, s: 1.2 }, 1100);
+    stopAnim('vuxen', 'walk');
+    await say('p7');
+    await repair();
   }
+}
+
+// ---------- Berättelse: Gå över gatan ----------
+function holdDrive(name, x1, ms) {
+  const a = A[name], x0 = a.x, el = a.el, inn = el.querySelector('.in');
+  return hold(done => {
+    let p = 0, on = false, raf = 0, last = 0, said = false;
+    const step = now => {
+      if (on) { p = Math.min(1, p + (now - last) / ms); setT(name, { x: x0 + (x1 - x0) * p }, 0); }
+      last = now;
+      if (p >= 1) return done();
+      raf = requestAnimationFrame(step);
+    };
+    const down = e => {
+      e.preventDefault(); ac(); on = true; inn.classList.remove('hint'); sfx('brumKort');
+      if (!said) { said = true; $('#sub').textContent = T('x_vantar'); voice(T('x_vantar'), REC.get('x_vantar')).catch(() => {}); }
+    };
+    const up = () => { on = false; if (p < 1) inn.classList.add('hint'); };
+    const cm = e => e.preventDefault();
+    el.addEventListener('pointerdown', down); el.addEventListener('contextmenu', cm);
+    addEventListener('pointerup', up); addEventListener('pointercancel', up);
+    el.classList.add('tappable'); inn.classList.add('hint');
+    raf = requestAnimationFrame(t => { last = t; step(t); });
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener('pointerdown', down); el.removeEventListener('contextmenu', cm);
+      removeEventListener('pointerup', up); removeEventListener('pointercancel', up);
+      el.classList.remove('tappable'); inn.classList.remove('hint');
+    };
+  });
+}
+async function storyGata() {
+  stage(BG.gata());
+  const FP = [110, 152, 194], CW = [[214, 204], [214, 170], [214, 138]];
+  FP.forEach((x, i) => put('fp' + i, PROP.fotspar() + HIT(20, -4), x, 270));
+  CW.forEach(([x, y], i) => { put('cw' + i, PROP.fotspar() + HIT(20, -4), x, y); fade('cw' + i, 0); });
+  actor('vuxen', 'vuxen', 24, 276, 1);
+  actor('teddy', 'teddy', 66, 280, .72);
+  const CARHIT = '<rect x="-56" y="-82" width="112" height="86" fill="#fff" opacity="0"/>';
+  const COLS = ['#e53935', '#1e88e5', '#43a047', '#fb8c00', '#8e24aa'];
+  const walkTo = async (t, v) => {
+    anim('teddy', 'walk'); anim('vuxen', 'walk');
+    move('vuxen', v, 700); await move('teddy', t, 700);
+    stopAnim('teddy', 'walk'); stopAnim('vuxen', 'walk');
+  };
+  await say('x1');
+  for (let i = 0; i < 3; i++) {
+    await tap('fp' + i); redraw('fp' + i, PROP.fotsparKlar());
+    await walkTo({ x: FP[i] - (i === 2 ? 6 : 0), y: 276 - i * 6 }, { x: FP[i] - 46, y: 276 - i * 5 });
+  }
+  mood('vuxen', 'glad', 'upp'); await say('x2'); mood('vuxen', 'glad');
+  await say('x3');
+  put('hand', `<g transform="scale(.42)">${PROP.hand()}</g>` + HIT(26, -22), 170, 206, 1, 'mini');
+  await tap('hand'); remove('hand');
+  await move('teddy', { x: 182 }, 300);
+  sfx('ok'); hearts(166, 160);
+  await say('x4');
+  await say('x5');
+  const SEQ = ['v', 'h', 'v'], PROMPT = ['x6', 'x7', 'x8'];
+  let cars = 0;
+  for (let i = 0; i < 3; i++) {
+    const d = SEQ[i];
+    for (let again = 0; ; again++) {
+      await say(again ? 'x_igen' : PROMPT[i]);
+      await choose([{ k: d, icon: d === 'v' ? ICON.pilV : ICON.pilH, l: d === 'v' ? 'x_v' : 'x_h' }]);
+      put('dim', `<rect x="${d === 'v' ? 200 : 0}" y="0" width="200" height="300" fill="#263238" opacity=".3" pointer-events="none"/>`, 0, 0, 1, 'mini');
+      setT('teddy', { r: d === 'v' ? -8 : 8 }, 300);
+      const car = !again && cars < 2 && (Math.random() < .45 || (i === 2 && !cars));
+      if (car) {
+        cars++;
+        const c = COLS[Math.floor(Math.random() * COLS.length)];
+        if (d === 'v') { put('car', PROP.bil(c) + CARHIT, -70, 212, .85); sfx('brumKort'); await move('car', { x: 42 }, 900); }
+        else { put('car', PROP.bil(c) + CARHIT, 470, 168, .72); setT('car', { f: -1 }); sfx('brumKort'); await move('car', { x: 358 }, 900); }
+        mood('teddy', 'forvanad');
+        await say('x_bil');
+        await holdDrive('car', d === 'v' ? 490 : -90, 2200);
+        remove('car');
+        mood('teddy', 'glad');
+        await say('x_forbi');
+      } else await say('x_tom');
+      remove('dim'); setT('teddy', { r: 0 }, 300);
+      if (!car) break;
+    }
+  }
+  await say('x9');
+  await say('x10');
+  for (let i = 0; i < 3; i++) {
+    fade('cw' + i, 1);
+    await tap('cw' + i); redraw('cw' + i, PROP.fotsparKlar());
+    const [x, y] = CW[i];
+    await walkTo({ x, y: y + 2, s: .72 - (i + 1) * .06 }, { x: x - 44, y: y + 4, s: 1 - (i + 1) * .09 });
+  }
+  await walkTo({ x: 214, y: 118, s: .46 }, { x: 176, y: 120, s: .64 });
+  sfx('ok'); mood('teddy', 'glad', 'upp'); hearts(214, 50);
+  await say('x11');
+  mood('teddy', 'glad');
+  await say('x12');
 }
 
 // ---------- Berättelse 3: Arg utan att bita ----------
@@ -551,7 +761,8 @@ async function storyForlat() {
 // ---------- Berättelser ----------
 const STORIES = [
   { id: 'forsthem', title: 'Först hem, sen leka', run: storyForsthem, tip: 'Prata om: Vad gjorde Teddy först? Vad fick han göra sen? Säg "först … sen …" på riktigt, till exempel på vägen hem från förskolan.' },
-  { id: 'stopp', title: 'Stopp vid vägen', run: storyStopp, tip: 'Prata om: Varför sa {vuxen} stopp? Lek stopp-leken: spring runt och frys när någon säger STOPP.' },
+  { id: 'stopp', title: 'Stopp vid vägen', run: storyStopp, tip: 'Prata om: Varför sparkar vi bollen långt från vägen? Varför tittar man först innan man sparkar? Lek stopp-leken: spring runt och frys när någon säger STOPP.' },
+  { id: 'gata', title: 'Gå över gatan', run: storyGata, tip: 'Öva på riktigt vid en lugn gata: stanna vid kanten, håll handen och titta vänster, höger, vänster tillsammans. Säg högt vad ni ser.' },
   { id: 'arg', title: 'När Teddy blir arg', run: storyArg, tip: 'Öva tillsammans: blås ut fingerljus, stampa, säg STOPP, krama en kudde. Fråga: Vad vill du göra när du blir arg?' },
   { id: 'gunga', title: 'Turas om', run: storyGunga, tip: 'Öva att turas om med en leksak och ett timglas eller en timer. Räkna högt tillsammans medan ni väntar.' },
   { id: 'forlat', title: 'Förlåt och trösta', run: storyForlat, tip: 'Prata om: Hur kändes det för Anka? Vad kan man göra när någon blir ledsen?' },

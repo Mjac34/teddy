@@ -46,6 +46,7 @@ button { font-family: inherit; color: inherit; }
 #stage { border-radius: 22px; overflow: hidden; box-shadow: 0 6px 0 rgba(0,0,0,.12); background: #fff; }
 #stage.shake { animation: shake .35s; }
 #svg { display: block; width: 100%; height: auto; touch-action: manipulation; }
+#svg .tappable { touch-action: none; }
 #sub { min-height: 2.6em; margin: 10px 6px 6px; text-align: center; font-family: system-ui, sans-serif; font-size: 16px; color: #6d4c41; }
 #choices { display: none; flex-wrap: wrap; justify-content: center; gap: 12px; }
 #choices.show { display: flex; animation: fadeIn .3s; }

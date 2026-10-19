@@ -81,7 +81,11 @@ const carShape = c => `<path d="M10 66 V52 Q10 46 18 45 L30 30 Q34 26 40 26 H62 
 const PROP = {
   leksaksbil: (c = '#e53935') => `<g transform="translate(-22 -34) scale(.44)">${carShape(c)}</g>`,
   bil: (c = '#1e88e5') => `<g transform="translate(-51 -78)">${carShape(c)}</g>`,
-  boll: () => `<g transform="translate(0 -13)"><circle r="13" fill="#ffca28"/><path d="M-13 0 H13 M0 -13 Q-9 0 0 13 M0 -13 Q9 0 0 13" stroke="#e53935" stroke-width="2.5" fill="none"/></g>`,
+  boll: (p = 1, plast = false) => { const sy = .28 + .72 * p, sx = 1.35 - .35 * p;
+    return `<g transform="scale(${sx} ${sy}) translate(0 -13)"><circle r="13" fill="#ffca28"/><path d="M-13 0 H13 M0 -13 Q-9 0 0 13 M0 -13 Q9 0 0 13" stroke="#e53935" stroke-width="2.5" fill="none"/></g>` +
+      (plast ? `<g transform="translate(5 ${-13 * sy - 2}) rotate(-25)">${PROP.plaster(.55)}</g>` : ''); },
+  plaster: (s = 1) => `<g transform="scale(${s})"><rect x="-20" y="-8" width="40" height="16" rx="8" fill="#f5c9a0" stroke="#d9a273" stroke-width="1.5"/><rect x="-7" y="-6" width="14" height="12" rx="2" fill="#fbe3cc"/><g fill="#d9a273"><circle cx="-14" cy="-2" r="1.2"/><circle cx="-14" cy="3" r="1.2"/><circle cx="14" cy="-2" r="1.2"/><circle cx="14" cy="3" r="1.2"/></g></g>`,
+  pump: () => `<g class="pump"><rect x="-26" y="-6" width="52" height="8" rx="3" fill="#455a64"/><rect x="-9" y="-62" width="18" height="58" rx="5" fill="#43a047" stroke="#2e7d32" stroke-width="2"/><g class="ph"><rect x="-2" y="-84" width="4" height="24" fill="#90a4ae"/><rect x="-20" y="-92" width="40" height="10" rx="5" fill="#ffb300"/></g><path d="M9 -20 Q30 -16 36 -4" stroke="#212121" stroke-width="3" fill="none"/></g>`,
   fotspar: () => `<g transform="translate(-14 -10)" fill="#8d6e63" opacity=".8"><ellipse cx="7" cy="12" rx="6" ry="7"/><circle cx="2" cy="3" r="2.4"/><circle cx="7" cy="1" r="2.4"/><circle cx="12" cy="3" r="2.4"/><ellipse cx="21" cy="8" rx="6" ry="7"/><circle cx="16" cy="-1" r="2.4"/><circle cx="21" cy="-3" r="2.4"/><circle cx="26" cy="-1" r="2.4"/></g>`,
   fotsparKlar: () => `<g transform="translate(-14 -10)" fill="#43a047"><ellipse cx="7" cy="12" rx="6" ry="7"/><circle cx="2" cy="3" r="2.4"/><circle cx="7" cy="1" r="2.4"/><circle cx="12" cy="3" r="2.4"/><ellipse cx="21" cy="8" rx="6" ry="7"/><circle cx="16" cy="-1" r="2.4"/><circle cx="21" cy="-3" r="2.4"/><circle cx="26" cy="-1" r="2.4"/></g>`,
   pol: () => `<ellipse cx="0" cy="-6" rx="30" ry="9" fill="#64b5f6"/><ellipse cx="-8" cy="-8" rx="10" ry="3" fill="#bbdefb"/>`,
@@ -118,6 +122,10 @@ const ICON = {
   hus: ic(`<rect x="20" y="46" width="60" height="44" fill="#fff176" stroke="#f9a825" stroke-width="3"/><path d="M10 50 L50 14 L90 50Z" fill="#1e88e5"/><rect x="42" y="62" width="16" height="28" rx="3" fill="#8d6e63"/><rect x="26" y="56" width="12" height="12" fill="#b3e5fc"/><rect x="62" y="56" width="12" height="12" fill="#b3e5fc"/>`),
   lekaUte: ic(`<rect width="100" height="100" rx="14" fill="#c8e6c9"/><circle cx="74" cy="34" r="20" fill="#66bb6a"/><rect x="70" y="50" width="8" height="34" fill="#8d6e63"/><g transform="translate(34 86) scale(2)">${PROP.boll()}</g>`),
   timglas: ic(`<g transform="translate(50 90) scale(1)">${PROP.timglas()}</g>`),
+  gras: ic(`<rect width="100" height="100" rx="14" fill="#c5e1a5"/><path d="M14 30 l4 -10 l4 10 M74 22 l4 -10 l4 10 M40 16 l4 -10 l4 10" stroke="#7cb342" stroke-width="3" fill="none"/><rect x="76" y="56" width="8" height="36" fill="#8d6e63"/><circle cx="80" cy="44" r="18" fill="#66bb6a"/><g transform="translate(40 80) scale(2.2)">${PROP.boll()}</g>`),
+  vag: ic(`<rect width="100" height="100" rx="14" fill="#78909c"/><path d="M0 50 H100" stroke="#fff" stroke-width="5" stroke-dasharray="16 10"/><g transform="translate(50 82) scale(2.2)">${PROP.boll()}</g>`),
+  pilV: ic(`<path d="M8 50 L44 18 V36 H92 V64 H44 V82Z" fill="#42a5f5" stroke="#1565c0" stroke-width="4" stroke-linejoin="round"/><circle cx="68" cy="50" r="9" fill="#fff"/><circle cx="65" cy="50" r="4.5" fill="${INK}"/>`),
+  pilH: ic(`<path d="M92 50 L56 18 V36 H8 V64 H56 V82Z" fill="#ef6c00" stroke="#bf360c" stroke-width="4" stroke-linejoin="round"/><circle cx="32" cy="50" r="9" fill="#fff"/><circle cx="35" cy="50" r="4.5" fill="${INK}"/>`),
 };
 const NUM = n => ic(`<circle cx="50" cy="50" r="44" fill="${['#ef5350', '#ffa726', '#ffca28', '#66bb6a', '#42a5f5'][n - 1]}"/><text x="50" y="68" font-size="52" font-weight="bold" text-anchor="middle" fill="#fff" font-family="sans-serif">${n}</text>`);
 
@@ -140,6 +148,15 @@ const BG = {
     <rect y="130" width="400" height="58" fill="#78909c"/><path d="M0 159 H400" stroke="#fff" stroke-width="4" stroke-dasharray="26 18"/>
     <rect y="186" width="400" height="20" fill="#cfd8dc"/><rect y="186" width="400" height="4" fill="#90a4ae"/>
     <rect y="206" width="400" height="94" fill="#aed581"/>${tree(36, 300, .9)}<g fill="#7cb342"><circle cx="372" cy="290" r="20"/><circle cx="392" cy="284" r="16"/></g>`,
+  gata: () => sky + cloud(60, 26, .7) + cloud(300, 20, .8) +
+    `<g fill="#ffccbc" stroke="#bf8f7d" stroke-width="2"><rect x="10" y="44" width="56" height="58"/><rect x="84" y="32" width="46" height="70"/><rect x="270" y="40" width="64" height="62"/><rect x="350" y="54" width="44" height="48"/></g>
+    <g fill="#b3e5fc">${[20, 42, 94, 110, 282, 308, 358, 374].map((x, i) => `<rect x="${x}" y="${i % 2 ? 62 : 56}" width="11" height="11"/>`).join('')}</g>
+    ${tree(200, 102, .6)}
+    <rect y="100" width="400" height="24" fill="#cfd8dc"/><rect y="120" width="400" height="4" fill="#90a4ae"/>
+    <rect y="124" width="400" height="92" fill="#78909c"/><path d="M0 170 H400" stroke="#fff" stroke-width="3" stroke-dasharray="22 16"/>
+    <g fill="#fff">${[130, 148, 166, 184, 202].map(y => `<rect x="${158 - (y - 124) * .25}" y="${y}" width="${84 + (y - 124) * .5}" height="9" rx="1"/>`).join('')}</g>
+    <rect y="214" width="400" height="8" fill="#90a4ae"/><rect y="222" width="400" height="78" fill="#e0e0e0"/>
+    <g stroke="#cfcfcf" stroke-width="2">${[60, 130, 270, 340].map(x => `<line x1="${x}" y1="222" x2="${x - 10}" y2="300"/>`).join('')}<line x1="0" y1="262" x2="400" y2="262"/></g>`,
   arg: () => `<rect width="400" height="210" fill="#ffe0b2"/><rect y="200" width="400" height="100" fill="#bcaaa4"/>
     <g stroke="#a1887f" stroke-width="2">${[230, 260, 290].map(y => `<line x1="0" y1="${y}" x2="400" y2="${y}"/>`).join('')}</g>
     <rect x="40" y="40" width="90" height="80" rx="6" fill="#b3e5fc" stroke="#fff" stroke-width="6"/><path d="M85 40 V120 M40 80 H130" stroke="#fff" stroke-width="4"/>
@@ -162,6 +179,7 @@ const SWING = `<g id="swingG"><path d="M178 58 V206 M222 58 V206" stroke="#61616
 const CARD = {
   forsthem: () => ic(`<rect width="100" height="100" rx="14" fill="#c8e6c9"/><path d="M0 80 Q50 66 100 80 V92 Q50 78 0 92Z" fill="#d7ccc8"/><g transform="translate(38 0) scale(.62)">${ICON.hus.replace(/<\/?svg[^>]*>/g, '')}</g><g transform="translate(22 92) scale(.38)">${charG('teddy')}</g>`),
   stopp: () => ic(`<rect width="100" height="100" rx="14" fill="#cfd8dc"/><rect y="30" width="100" height="28" fill="#78909c"/><g transform="translate(58 44) scale(.62) translate(-50 -78)">${carShape('#1e88e5')}</g><g transform="translate(4 52) scale(.46)">${handIcon()}</g>`),
+  gata: () => ic(`<rect width="100" height="100" rx="14" fill="#e0e0e0"/><rect y="22" width="100" height="44" fill="#78909c"/><g fill="#fff">${[26, 36, 46, 56].map(y => `<rect x="34" y="${y}" width="32" height="5"/>`).join('')}</g><g transform="translate(4 88) scale(.3)"><path d="M8 50 L44 18 V36 H92 V64 H44 V82Z" fill="#42a5f5"/></g><g transform="translate(66 88) scale(.3)"><path d="M92 50 L56 18 V36 H8 V64 H56 V82Z" fill="#ef6c00"/></g><g transform="translate(50 98) scale(.3)">${charG('teddy')}</g>`),
   arg: () => ic(`<rect width="100" height="100" rx="14" fill="#ffe0b2"/><g transform="translate(36 60) scale(1.15)">${headG('teddy', 'arg')}</g><g transform="translate(66 96) scale(.7)">${PROP.ljus()}</g><g transform="translate(86 96) scale(.7)">${PROP.ljus()}</g>`),
   gunga: () => ic(`<rect width="100" height="100" rx="14" fill="#bbdefb"/><path d="M14 98 L30 12 M46 98 L30 12 M54 98 L70 12 M86 98 L70 12" stroke="#e53935" stroke-width="5" fill="none"/><rect x="24" y="10" width="52" height="6" rx="3" fill="#c62828"/><g transform="rotate(14 50 14)"><path d="M40 14 V70 M60 14 V70" stroke="#616161" stroke-width="2"/><g transform="translate(50 78) scale(.5)">${charG('mus')}</g><rect x="36" y="68" width="28" height="6" rx="2" fill="#5d4037"/></g>`),
   forlat: () => ic(`<rect width="100" height="100" rx="14" fill="#e1f5fe"/><g transform="translate(34 64) scale(1.05)">${headG('anka', 'ledsen')}</g><g transform="translate(62 46) scale(.38)"><path d="${HEART}" fill="#ec407a"/></g><g transform="translate(76 96) scale(.8)">${PROP.kloss('#42a5f5', 'A')}</g>`),
