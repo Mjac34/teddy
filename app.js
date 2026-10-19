@@ -518,7 +518,7 @@ async function storyGata() {
   stage(BG.gata());
   const FP = [110, 152, 194], CW = [[214, 204], [214, 170], [214, 138]];
   FP.forEach((x, i) => put('fp' + i, PROP.fotspar() + HIT(20, -4), x, 270));
-  CW.forEach(([x, y], i) => { put('cw' + i, PROP.fotspar() + HIT(20, -4), x, y); fade('cw' + i, 0); });
+  CW.forEach(([x, y], i) => { put('cw' + i, PROP.fotspar() + HIT(20, -4), x, y, 1, 'mini'); fade('cw' + i, 0); });
   actor('vuxen', 'vuxen', 24, 276, 1);
   actor('teddy', 'teddy', 66, 280, .72);
   const CARHIT = '<rect x="-56" y="-82" width="112" height="86" fill="#fff" opacity="0"/>';
@@ -568,6 +568,7 @@ async function storyGata() {
     }
   }
   await say('x9');
+  CW.forEach((_, i) => fade('cw' + i, .45));
   await say('x10');
   for (let i = 0; i < 3; i++) {
     fade('cw' + i, 1);
