@@ -2,7 +2,7 @@
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const NS = 'http://www.w3.org/2000/svg';
 const LS = 'teddy-v1';
-const S = Object.assign({ vuxen: 'Mamma', voice: true, sound: true, rate: .9, stars: {} }, JSON.parse(localStorage.getItem(LS) || '{}'));
+const S = Object.assign({ vuxen: 'Mamma', voice: true, sound: true, rate: 1, stars: {} }, JSON.parse(localStorage.getItem(LS) || '{}'));
 const save = () => localStorage.setItem(LS, JSON.stringify(S));
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -154,7 +154,8 @@ function hold(ex) {
   });
 }
 function abortAll() { for (const p of [...pend]) { p.done = true; p.clean && p.clean(); p.rej(new Abort()); } pend.clear(); }
-const wait = ms => hold(d => { const t = setTimeout(d, ms); return () => clearTimeout(t); });
+const SPEED = .65;
+const wait = ms => hold(d => { const t = setTimeout(d, ms * SPEED); return () => clearTimeout(t); });
 
 // ---------- Ljud ----------
 let AC = null;
@@ -216,7 +217,7 @@ function voice(text, blob) {
     let to = 0;
     if (blob) {
       const url = URL.createObjectURL(blob), a = new Audio(url);
-      a.onended = () => setTimeout(done, 200); a.onerror = done; a.play().catch(done); to = setTimeout(done, 30000);
+      a.onended = () => setTimeout(done, 80); a.onerror = done; a.play().catch(done); to = setTimeout(done, 30000);
       return () => { clearTimeout(to); a.pause(); URL.revokeObjectURL(url); };
     }
     if (!S.voice || !('speechSynthesis' in window)) { to = setTimeout(done, 900 + text.length * 55); return () => clearTimeout(to); }
@@ -224,7 +225,7 @@ function voice(text, blob) {
     try { speechSynthesis.cancel(); } catch (e) {}
     const u = new SpeechSynthesisUtterance(text); u.lang = 'sv-SE'; u.rate = S.rate; u.pitch = 1.1;
     if (svVoice) u.voice = svVoice;
-    u.onend = u.onerror = () => { if (!ended) { ended = true; setTimeout(done, 250); } };
+    u.onend = u.onerror = () => { if (!ended) { ended = true; setTimeout(done, 80); } };
     to = setTimeout(done, 3000 + text.length * 100 / S.rate);
     speechSynthesis.speak(u);
     return () => { clearTimeout(to); if (!ended) { ended = true; try { speechSynthesis.cancel(); } catch (e) {} } };
@@ -254,7 +255,7 @@ function put(name, html, x, y, s = 1, layer = 'props') {
 }
 function setT(name, o = {}, ms = 0) {
   const a = A[name]; Object.assign(a, o);
-  a.el.style.transition = ms ? `transform ${ms}ms ease-in-out, opacity .5s` : 'opacity .5s';
+  a.el.style.transition = ms ? `transform ${ms * SPEED}ms ease-in-out, opacity .5s` : 'opacity .5s';
   a.el.style.transform = `translate(${a.x}px, ${a.y}px) rotate(${a.r}deg) scale(${a.s * a.f}, ${a.s})`;
 }
 const move = (name, o, ms = 800) => { setT(name, o, ms); return wait(ms); };
@@ -314,7 +315,7 @@ function count(n) {
       if (!e.target.closest('button') || c >= n) return;
       box.querySelectorAll('button')[c].classList.add('done'); c++; sfx('pop');
       const id = 'n' + c; $('#sub').textContent = T(id); voice(T(id), REC.get(id)).catch(() => {});
-      if (c >= n) setTimeout(done, 1000);
+      if (c >= n) setTimeout(done, 500);
     };
     return () => { box.onclick = null; box.classList.remove('show'); box.innerHTML = ''; };
   });
