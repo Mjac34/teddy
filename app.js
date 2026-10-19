@@ -550,7 +550,7 @@ async function storyGata() {
     for (let again = 0; ; again++) {
       await say(again ? 'x_igen' : PROMPT[i]);
       await choose([{ k: d, icon: d === 'v' ? ICON.pilV : ICON.pilH, l: d === 'v' ? 'x_v' : 'x_h' }]);
-      put('dim', `<rect x="${d === 'v' ? 200 : 0}" y="0" width="200" height="300" fill="#263238" opacity=".3" pointer-events="none"/>`, 0, 0, 1, 'mini');
+      put('dim', `<rect x="${d === 'v' ? 0 : 200}" y="124" width="200" height="92" fill="#fff59d" opacity=".45" pointer-events="none"/>`, 0, 0);
       face(d === 'v' ? 'bakV' : 'bakH');
       const car = !again && cars < 2 && (Math.random() < .45 || (i === 2 && !cars));
       if (car) {
