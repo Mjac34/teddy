@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#c68a4e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="style.css">
+<title>Teddys dag</title>
+</head>
+<body>
+
+<div id="home" class="screen active"><div class="wrap">
+  <div class="top"><div style="flex:1"></div><button class="round" id="gearBtn" aria-label="Inställningar (håll in)">⚙️</button></div>
+  <div class="hero"><div id="heroTeddy"></div><h1>Teddys dag</h1></div>
+  <div id="cards"></div>
+  <p class="tip">Spela tillsammans och prata om det som händer. Håll in ⚙️ en sekund för inställningar och för att spela in din egen röst.</p>
+</div></div>
+
+<div id="play" class="screen"><div class="wrap">
+  <div class="top"><button class="round" id="homeBtn" aria-label="Hem">🏠</button><h2 id="pTitle"></h2><button class="round" id="againBtn" aria-label="Säg igen">?</button></div>
+  <div id="board" class="hide"><div class="fs" id="fs0"><b>FÖRST</b><div class="art"></div></div><div class="arrow">➜</div><div class="fs" id="fs1"><b>SEN</b><div class="art"></div></div></div>
+  <div id="stage"><svg id="svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet"><g id="L-bg"></g><g id="L-props"></g><g id="L-actors"></g><g id="L-mini"></g><g id="L-fx"></g></svg></div>
+  <p id="sub"></p>
+  <div id="choices"></div>
+</div></div>
+
+<div id="settings" class="screen"><div class="wrap">
+  <div class="top"><button class="round" id="setBack" aria-label="Tillbaka">🏠</button><h2>Inställningar</h2></div>
+  <div class="panel">
+    <label class="row">Vem är den vuxna i berättelserna?<input type="text" id="sVuxen" maxlength="20"></label>
+    <label class="row chk"><input type="checkbox" id="sVoice"> Uppläsning med datorröst</label>
+    <label class="row chk"><input type="checkbox" id="sSound"> Ljudeffekter</label>
+    <label class="row">Talhastighet (datorröst)<input type="range" id="sRate" min="0.6" max="1.2" step="0.05"></label>
+  </div>
+  <h3>Spela in din egen röst</h3>
+  <p class="note">Tryck ⏺ och läs repliken, tryck ⏹ när du är klar. En inspelad replik ersätter datorrösten. Inspelningarna sparas bara på den här enheten. <b id="recCount"></b></p>
+  <div id="recList"></div>
+  <div class="panel"><button class="btn" id="resetStars">Nollställ stjärnor</button></div>
+</div></div>
+
+<div id="end" class="ov"><div class="card">
+  <div id="endStar"></div>
+  <h2>Bra jobbat!</h2>
+  <p id="endTip"></p>
+  <div class="row2"><button class="btn big2" id="endAgain">↻ Igen</button><button class="btn big2 home" id="endHome">🏠 Hem</button></div>
+</div></div>
+
+<canvas id="confetti"></canvas>
+<script src="art.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
