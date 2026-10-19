@@ -72,7 +72,21 @@ function bodyG(kind, pose) {
   if (kind === 'vuxen') s += `<path d="M-21 18 Q0 30 21 18 L21 25 Q0 37 -21 25Z" fill="#43a047"/><path d="M8 28 L14 50 L22 46 L15 27Z" fill="#388e3c"/>`;
   return s;
 }
-const charG = (kind, m = 'glad', pose) => `<g transform="translate(0 -63)">${bodyG(kind, pose)}${headG(kind, m)}</g>`;
+// Bakifrån (pose 'bak', 'bakV' = tittar åt vänster, 'bakH' = åt höger)
+function backG(kind, pose) {
+  const { c, d, e } = KIND[kind], dir = pose === 'bakV' ? -1 : pose === 'bakH' ? 1 : 0, hx = dir * 5;
+  let s = `<ellipse cx="0" cy="32" rx="22" ry="26" fill="${c}"/><circle cx="0" cy="44" r="6" fill="${d}"/>` +
+    `<ellipse cx="-22" cy="26" rx="7" ry="13" fill="${c}" transform="rotate(20 -22 26)"/><ellipse cx="22" cy="26" rx="7" ry="13" fill="${c}" transform="rotate(-20 22 26)"/>` +
+    `<ellipse cx="-11" cy="58" rx="9" ry="5" fill="${d}"/><ellipse cx="11" cy="58" rx="9" ry="5" fill="${d}"/>`;
+  if (kind === 'vuxen') s += `<path d="M-21 16 Q0 28 21 16 L21 24 Q0 36 -21 24Z" fill="#43a047"/>`;
+  if (kind === 'teddy') s += `<path d="M-6 6 Q0 10 6 6" stroke="#e53935" stroke-width="3" fill="none"/>`;
+  s += `<g transform="translate(${hx} 0)">`;
+  if (dir) s += `<ellipse cx="${dir * 22}" cy="8" rx="9" ry="8" fill="${e}"/><ellipse cx="${dir * 29}" cy="4" rx="3.6" ry="3" fill="${INK}"/><circle cx="${dir * 15}" cy="-4" r="3.2" fill="${INK}"/>`;
+  s += `<circle cx="-19" cy="-19" r="10" fill="${c}"/><circle cx="19" cy="-19" r="10" fill="${c}"/><circle r="26" fill="${c}"/>`;
+  if (dir) s += `<path d="M${-dir * 6} -14 Q${dir * 12} -8 ${dir * 20} 6" stroke="${d}" stroke-width="2" fill="none" opacity=".35"/>`;
+  return s + '</g>';
+}
+const charG = (kind, m = 'glad', pose) => `<g transform="translate(0 -63)">${pose && pose.startsWith('bak') ? backG(kind, pose) : bodyG(kind, pose) + headG(kind, m)}</g>`;
 const headSvg = (kind, m = 'glad') => `<svg viewBox="-46 -64 92 96">${headG(kind, m)}</svg>`;
 const charSvg = (kind, m = 'glad', pose) => `<svg viewBox="-50 -158 100 162"><g transform="translate(0 0)">${charG(kind, m, pose)}</g></svg>`;
 

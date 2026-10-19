@@ -531,7 +531,9 @@ async function storyGata() {
     await tap('fp' + i); redraw('fp' + i, PROP.fotsparKlar());
     await walkTo({ x: FP[i] - (i === 2 ? 6 : 0), y: 276 - i * 6 }, { x: FP[i] - 46, y: 276 - i * 5 });
   }
-  mood('vuxen', 'glad', 'upp'); await say('x2'); mood('vuxen', 'glad');
+  const face = pose => { mood('teddy', 'glad', pose); mood('vuxen', 'glad', pose); };
+  face('bak'); await wait(300);
+  await say('x2');
   await say('x3');
   put('hand', `<g transform="scale(.42)">${PROP.hand()}</g>` + HIT(26, -22), 170, 206, 1, 'mini');
   await tap('hand'); remove('hand');
@@ -547,21 +549,19 @@ async function storyGata() {
       await say(again ? 'x_igen' : PROMPT[i]);
       await choose([{ k: d, icon: d === 'v' ? ICON.pilV : ICON.pilH, l: d === 'v' ? 'x_v' : 'x_h' }]);
       put('dim', `<rect x="${d === 'v' ? 200 : 0}" y="0" width="200" height="300" fill="#263238" opacity=".3" pointer-events="none"/>`, 0, 0, 1, 'mini');
-      setT('teddy', { r: d === 'v' ? -8 : 8 }, 300);
+      face(d === 'v' ? 'bakV' : 'bakH');
       const car = !again && cars < 2 && (Math.random() < .45 || (i === 2 && !cars));
       if (car) {
         cars++;
         const c = COLS[Math.floor(Math.random() * COLS.length)];
         if (d === 'v') { put('car', PROP.bil(c) + CARHIT, -70, 212, .85); sfx('brumKort'); await move('car', { x: 42 }, 900); }
         else { put('car', PROP.bil(c) + CARHIT, 470, 168, .72); setT('car', { f: -1 }); sfx('brumKort'); await move('car', { x: 358 }, 900); }
-        mood('teddy', 'forvanad');
         await say('x_bil');
         await holdDrive('car', d === 'v' ? 490 : -90, 2200);
         remove('car');
-        mood('teddy', 'glad');
         await say('x_forbi');
       } else await say('x_tom');
-      remove('dim'); setT('teddy', { r: 0 }, 300);
+      remove('dim'); face('bak');
       if (!car) break;
     }
   }
@@ -574,6 +574,7 @@ async function storyGata() {
     await walkTo({ x, y: y + 2, s: .72 - (i + 1) * .06 }, { x: x - 44, y: y + 4, s: 1 - (i + 1) * .09 });
   }
   await walkTo({ x: 214, y: 118, s: .46 }, { x: 176, y: 120, s: .64 });
+  face(); await wait(300);
   sfx('ok'); mood('teddy', 'glad', 'upp'); hearts(214, 50);
   await say('x11');
   mood('teddy', 'glad');
