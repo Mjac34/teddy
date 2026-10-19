@@ -485,27 +485,29 @@ async function storyStopp() {
 
 // ---------- Berättelse: Gå över gatan ----------
 function holdDrive(name, x1, ms) {
-  const a = A[name], x0 = a.x, el = a.el, inn = el.querySelector('.in');
+  const a = A[name], x0 = a.x, el = a.el, inn = el.querySelector('.in'), svg = $('#svg');
   return hold(done => {
-    let p = 0, on = false, raf = 0, last = 0, said = false;
+    let p = 0, on = false, auto = false, raf = 0, last = 0, said = false;
     const step = now => {
-      if (on) { p = Math.min(1, p + (now - last) / ms); setT(name, { x: x0 + (x1 - x0) * p }, 0); }
+      if (on || auto) { p = Math.min(1, p + (now - last) / ms * (auto ? 2 : 1)); setT(name, { x: x0 + (x1 - x0) * p }, 0); }
       last = now;
       if (p >= 1) return done();
       raf = requestAnimationFrame(step);
     };
     const down = e => {
       e.preventDefault(); ac(); on = true; inn.classList.remove('hint'); sfx('brumKort');
+      try { el.setPointerCapture(e.pointerId); } catch (_) {}
       if (!said) { said = true; $('#sub').textContent = T('x_vantar'); voice(T('x_vantar'), REC.get('x_vantar')).catch(() => {}); }
     };
-    const up = () => { on = false; if (p < 1) inn.classList.add('hint'); };
+    const up = () => { on = false; if (p >= .4) auto = true; else if (p < 1) inn.classList.add('hint'); };
     const cm = e => e.preventDefault();
     el.addEventListener('pointerdown', down); el.addEventListener('contextmenu', cm);
     addEventListener('pointerup', up); addEventListener('pointercancel', up);
+    svg.style.touchAction = 'none';
     el.classList.add('tappable'); inn.classList.add('hint');
     raf = requestAnimationFrame(t => { last = t; step(t); });
     return () => {
-      cancelAnimationFrame(raf);
+      cancelAnimationFrame(raf); svg.style.touchAction = '';
       el.removeEventListener('pointerdown', down); el.removeEventListener('contextmenu', cm);
       removeEventListener('pointerup', up); removeEventListener('pointercancel', up);
       el.classList.remove('tappable'); inn.classList.remove('hint');
@@ -557,7 +559,7 @@ async function storyGata() {
         if (d === 'v') { put('car', PROP.bil(c) + CARHIT, -70, 212, .85); sfx('brumKort'); await move('car', { x: 42 }, 900); }
         else { put('car', PROP.bil(c) + CARHIT, 470, 168, .72); setT('car', { f: -1 }); sfx('brumKort'); await move('car', { x: 358 }, 900); }
         await say('x_bil');
-        await holdDrive('car', d === 'v' ? 490 : -90, 2200);
+        await holdDrive('car', d === 'v' ? 470 : -70, 1800);
         remove('car');
         await say('x_forbi');
       } else await say('x_tom');
